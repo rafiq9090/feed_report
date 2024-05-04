@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Type-in Feed Dashboard</title>
+  <!-- Include Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+    }
+    .chart-container {
+      margin-top: 20px;
+    }
+   th{
+    padding: 5px;
+   }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Type-in Feed Dashboard</h1>
+    <br>
+    <div class="total-revenue">Total Revenue: <span id="totalRevenue"></span></div>
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Geo</th>
+        <th>Initial Searches</th>
+        <th>Feed Searches</th>
+        <th>Monetized Searches</th>
+        <th>Clicks</th>
+        <th>Revenue</th>
+        <th>CPC</th>
+        <th>CTR</th>
+        <th>Coverage</th>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    // Fetch data from the API endpoint
+    fetch('https://a.searchfor.live/report/5f47a7fb-c9a3-4d51-a054-227113b13c05?start=2024-04-01&end=2024-05-30')
+      .then(response => response.json())
+      .then(data => {
+        const table = document.querySelector('table');
+        const totalRevenueSpan = document.getElementById('totalRevenue');
+
+        // Initialize total revenue
+        let totalRevenue = 0;
+
+        data.report.forEach(entry => {
+          const row = table.insertRow();
+
+          const dateCell = row.insertCell(0);
+          dateCell.textContent = entry.date;
+
+          const geoCell = row.insertCell(1);
+          geoCell.textContent = entry.geo || '-';
+
+          const initialSearchesCell = row.insertCell(2);
+          initialSearchesCell.textContent = entry.initial_searches;
+
+          const feedSearchesCell = row.insertCell(3);
+          feedSearchesCell.textContent = entry.feed_searches;
+
+          const monetizedSearchesCell = row.insertCell(4);
+          monetizedSearchesCell.textContent = entry.monetized_searches;
+
+          const clicksCell = row.insertCell(5);
+          clicksCell.textContent = entry.clicks;
+
+          const revenueCell = row.insertCell(6);
+          revenueCell.textContent = entry.revenue.toFixed(2); // Display revenue with two decimal places
+          totalRevenue += entry.revenue; // Update total revenue
+          
+          const cpcCell = row.insertCell(7);
+          cpcCell.textContent = entry.cpc ? entry.cpc.toFixed(2) : '-'; // Display CPC with two decimal places or '-' if data is missing
+
+          const ctrCell = row.insertCell(8);
+          ctrCell.textContent = entry.ctr ? entry.ctr.toFixed(2) : '-'; // Display CTR with two decimal places or '-' if data is missing
+
+          const coverageCell = row.insertCell(9);
+          coverageCell.textContent = entry.coverage ? entry.coverage.toFixed(2) : '-'; // Display Coverage with two decimal places or '-' if data is missing
+        });
+
+        // Display total revenue
+        totalRevenueSpan.textContent = totalRevenue.toFixed(2);
+      })
+      .catch(error => console.error('Error fetching data:', error));
+  </script>
+</body>
+</html>
