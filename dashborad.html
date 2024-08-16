@@ -125,8 +125,10 @@
           return acc;
         }, {});
 
-        // Populate month select options
-        Object.keys(monthlyData).forEach(month => {
+        // Sort months and populate month select options
+        const sortedMonths = Object.keys(monthlyData).sort((a, b) => new Date(a) - new Date(b));
+
+        sortedMonths.forEach(month => {
           const option = document.createElement('option');
           option.value = month;
           option.textContent = month;
@@ -134,7 +136,9 @@
         });
 
         // Show least recent month by default
-        monthSelect.value = Math.min(...Object.keys(monthlyData));
+        if (sortedMonths.length > 0) {
+          monthSelect.value = sortedMonths[0];
+        }
 
         // Function to display data
         const displayData = (month) => {
@@ -182,7 +186,9 @@
         };
 
         // Initial display for default month
-        displayData(monthSelect.value);
+        if (sortedMonths.length > 0) {
+          displayData(sortedMonths[0]);
+        }
 
         // Update table when month is changed
         monthSelect.addEventListener('change', (event) => {
